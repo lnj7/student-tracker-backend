@@ -17,18 +17,30 @@ const app = express();
 //   'https://student-tracker-frontend-kdf5r8j3i-lnj7s-projects.vercel.app'
 // ];
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed for this origin'));
-    }
-  },
-  credentials: true,
+
+const corsOptionsDelegate = function (req, callback) {
+  let corsOptions;
+  if (allowedOrigins.includes(req.header('Origin'))) {
+    corsOptions = { origin: true, credentials: true };
+  } else {
+    corsOptions = { origin: false };
+  }
+  callback(null, corsOptions);
 };
 
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('CORS not allowed for this origin'));
+//     }
+//   },
+//   credentials: true,
+// };
+
+// app.use(cors(corsOptions));
+app.use(cors(corsOptionsDelegate));
 app.use(express.json());
 
 
