@@ -1,5 +1,6 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -10,9 +11,8 @@ function authMiddleware(req, res, next) {
 
   const token = authHeader.split(' ')[1];
   console.log('✅ [AUTH MIDDLEWARE] Incoming Authorization header:', authHeader);
-console.log('✅ [AUTH MIDDLEWARE] Split token:', token);
-console.log('✅ [AUTH MIDDLEWARE] Verifying with JWT_SECRET:', process.env.JWT_SECRET);
-
+  console.log('✅ [AUTH MIDDLEWARE] Split token:', token);
+  console.log('✅ [AUTH MIDDLEWARE] Verifying with JWT_SECRET:', process.env.JWT_SECRET);
 
   try {
     if (!process.env.JWT_SECRET) {
@@ -26,7 +26,6 @@ console.log('✅ [AUTH MIDDLEWARE] Verifying with JWT_SECRET:', process.env.JWT_
     console.log('✅ Token verified, user ID:', decoded.id);
     console.log('✅ [AUTH MIDDLEWARE] Token verified, decoded user ID:', decoded.id);
 
-
     next();
   } catch (err) {
     console.error('❌ Invalid token:', err.message);
@@ -34,4 +33,4 @@ console.log('✅ [AUTH MIDDLEWARE] Verifying with JWT_SECRET:', process.env.JWT_
   }
 }
 
-module.exports = authMiddleware;
+export default authMiddleware;

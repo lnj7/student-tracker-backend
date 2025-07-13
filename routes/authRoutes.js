@@ -1,20 +1,22 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+import User from '../models/User.js';
+import auth from '../middleware/auth.js';
+
 const router = express.Router();
 
-const User = require('../models/User');
-const auth = require('../middleware/auth');
-
 // ✅ Register new user
-// Register
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ error: 'Email already registered' });
 
-    const newUser = new User({ name, email, password }); // Don't hash here!
+    // ✅ Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
 
     res.status(201).json({ message: 'User created' });
@@ -24,8 +26,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-
-
 // ✅ Login user
 router.post('/login', async (req, res) => {
   try {
@@ -33,24 +33,17 @@ router.post('/login', async (req, res) => {
     console.log('LOGIN: Got email:', email);
 
     const user = await User.findOne({ email });
-    console.log('LOGIN: User found:', user);
-
     if (!user) {
       return res.status(400).json({ error: 'Invalid credentials (no user)' });
     }
-    console.log('LOGIN: Plain password:', password);
-console.log('LOGIN: Hashed in DB:', user.password);
 
     const valid = await bcrypt.compare(password, user.password);
-    console.log('LOGIN: Password valid?', valid);
-
     if (!valid) {
       return res.status(400).json({ error: 'Invalid credentials (bad password)' });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '2d' });
-   console.log('✅ [LOGIN ROUTE] Issuing token:', token);
-console.log('✅ [LOGIN ROUTE] Signing with JWT_SECRET:', process.env.JWT_SECRET);
+    console.log('✅ [LOGIN ROUTE] Issuing token:', token);
 
     res.json({ token });
   } catch (err) {
@@ -99,4 +92,4 @@ router.patch('/me', auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

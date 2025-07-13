@@ -1,10 +1,11 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
+      // These options are no longer needed in Mongoose 7+
+      // useNewUrlParser: true,
+      // useUnifiedTopology: true
     });
     console.log('✅ MongoDB connected');
   } catch (err) {
@@ -13,4 +14,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+export default connectDB;

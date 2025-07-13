@@ -1,12 +1,17 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
-module.exports = (req, res, next) => {
+const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: 'No token provided' });
+  if (!authHeader) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
 
   const token = authHeader.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'Invalid token format' });
+  if (!token) {
+    return res.status(401).json({ error: 'Invalid token format' });
+  }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
@@ -16,3 +21,5 @@ module.exports = (req, res, next) => {
     return res.status(401).json({ error: 'Invalid token' });
   }
 };
+
+export default authMiddleware;

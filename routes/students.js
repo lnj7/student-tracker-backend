@@ -1,8 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const Student = require('../models/Student');
+import express from 'express';
+import Student from '../models/Student.js';
 
-// GET all students
+const router = express.Router();
+
+// ✅ GET all students
 router.get('/', async (req, res) => {
   try {
     const students = await Student.find();
@@ -13,7 +14,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET single student by ID
+// ✅ GET single student by ID
 router.get('/:id', async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
@@ -25,7 +26,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST create a student (for testing)
+// ✅ POST create a student (for testing)
 router.post('/', async (req, res) => {
   try {
     const { name, lat, lon } = req.body;
@@ -38,4 +39,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
