@@ -14,8 +14,9 @@ dotenv.config();
 // ✅ Initialize Express app
 const app = express();
 
+
 // ✅ Middleware
-app.use(cors());
+app.use(cors({origin:'https://student-tracker-frontend-tau.vercel.app/', credentials: true}));
 app.use(express.json());
 
 // ✅ MongoDB Connection
