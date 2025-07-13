@@ -7,7 +7,8 @@ import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
-// ✅ Register new user
+
+// ✅ Register new user (fixed)
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -19,18 +20,30 @@ router.post('/register', async (req, res) => {
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
 
-    res.status(201).json({ message: 'User created' });
+    // ✅ Create JWT
+    const token = jwt.sign(
+      { id: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '2d' }
+    );
+
+    console.log('✅ [REGISTER ROUTE] Issuing token:', token);
+
+    // ✅ Send token in response
+    res.status(201).json({ token });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
+
 // ✅ Login user
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     console.log('LOGIN: Got email:', email);
+      console.log('🪵 Incoming login body:', req.body);
 
     const user = await User.findOne({ email });
     if (!user) {
