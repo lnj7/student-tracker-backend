@@ -15,14 +15,27 @@ dotenv.config();
 const app = express();
 
 
-// ✅ Middleware
+// ✅ Allow listed domains (local + deployed frontend)
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://student-tracker-frontend-tau.vercel.app',
+  'https://student-tracker-frontend-kdf5r8j3i-lnj7s-projects.vercel.app'
+];
+
+// ✅ Middleware for CORS
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://student-tracker-frontend-tau.vercel.app'
-  ],
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin like mobile apps or curl
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('CORS not allowed for this origin'), false);
+  },
+  credentials: true,
 }));
+
+// ✅ Handle preflight requests
+app.options('*', cors());
+
 app.use(express.json());
 
 // ✅ MongoDB Connection
