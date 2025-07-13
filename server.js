@@ -16,7 +16,7 @@ const app = express();
 
 
 // ✅ Middleware
-app.use(cors({origin:'https://student-tracker-frontend-tau.vercel.app/', credentials: true}));
+app.use(cors());
 app.use(express.json());
 
 // ✅ MongoDB Connection
