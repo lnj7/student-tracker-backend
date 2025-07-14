@@ -63,8 +63,8 @@ mongoose.connect(process.env.MONGO_URI)
     process.exit(1);
   });
 
-app.use('/students', studentRoutes);
-app.use('/users', authRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/users', authRoutes);
 
 app.get('/', (req, res) => {
   res.send('🌟 Student Tracker API is running');
